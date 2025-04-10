@@ -1,0 +1,29 @@
+/* Global styles for the layout */
+.layout {
+  display: flex;
+  min-height: 100vh; /* Ensure the layout fills the full viewport */
+}
+
+.sidebar {
+  width: 250px; /* Adjust the width of the sidebar */
+  background-color: #f4f4f4; /* Sidebar background color */
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.content {
+  flex-grow: 1; /* Make the content area take up the remaining space */
+  padding: 20px; /* Add padding to the content */
+  background-color: #fff; /* Content background color */
+  box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+  .layout {
+    flex-direction: column; /* Stack sidebar on top of content */
+  }
+  .sidebar {
+    width: 100%; /* Make sidebar take full width on small screens */
+    position: relative; /* Sidebar will stack above content */
+  }
+}
