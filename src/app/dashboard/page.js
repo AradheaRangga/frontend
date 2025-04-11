@@ -24,7 +24,10 @@ export default function Dashboard() {
     };
 
     axios
-      .get(`${process.env.NEXT_PUBLIC_BASE_URL}/api/patient`, config)
+      .get(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/patient/get-all-patient`,
+        config
+      )
       .then((response) => {
         setPatient(response.data.data);
       })
@@ -62,38 +65,28 @@ export default function Dashboard() {
           <tbody>
             {patient.length > 0 ? (
               patient.map((item, index) => (
-                <tr key={patient.id} className="bg-gray-800 border-gray-700">
+                <tr key={item.id} className="bg-gray-800 border-gray-700">
                   <th
                     scope="row"
                     className="px-6 py-4 font-medium text-white whitespace-nowrap"
                   >
                     {index + 1}
                   </th>
-                  <th
-                    scope="row"
-                    className="px-6 py-4 font-medium text-white whitespace-nowrap"
-                  >
-                    {item.name}
-                  </th>
-                  <th
-                    scope="row"
-                    className="px-6 py-4 font-medium text-white whitespace-nowrap"
-                  >
-                    {item.address}
-                  </th>
-                  <th
-                    scope="row"
-                    className="px-6 py-4 font-medium text-white whitespace-nowrap"
-                  >
+                  <td className="px-6 py-4 text-white">{item.name}</td>
+                  <td className="px-6 py-4 text-white">{item.address}</td>
+                  <td className="px-6 py-4 text-white">
                     <button className="text-blue-500 hover:underline">
-                      {" "}
-                      View{" "}
+                      View
                     </button>
-                  </th>
+                  </td>
                 </tr>
               ))
             ) : (
-              <h1>No Data</h1>
+              <tr>
+                <td colSpan="4" className="text-white py-4">
+                  No Data
+                </td>
+              </tr>
             )}
           </tbody>
         </table>
