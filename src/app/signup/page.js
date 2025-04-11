@@ -5,39 +5,31 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 
-export default function Login() {
+export default function Signup() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
   const [message, setMessage] = useState("");
-  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
     try {
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/sign-in`,
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/sign-up`,
         {
           email,
           password,
+          name,
+          phone,
         }
       );
-
-      const token = response.data.data.accessToken;
-      if (!token) {
-        setMessage("Token tidak ditemukan. Silakan login kembali.");
-        setLoading(false);
-        return;
-      }
-
-      localStorage.setItem("token", token);
-      setMessage("Login berhasil! Mengarahkan...");
-      router.push("/dashboard");
+      console.log(response.data);
+      setMessage("Akun berhasil dibuat! Mengarahkan ke login...");
+      setTimeout(() => router.push("/login"), 2000);
     } catch (error) {
-      setMessage(error.response?.data?.message || "Login gagal");
-    } finally {
-      setLoading(false);
+      setMessage(error.response?.data?.message || "Registrasi gagal");
     }
   };
 
@@ -56,11 +48,28 @@ export default function Login() {
 
       <div className="w-full rounded-lg shadow border sm:max-w-md xl:p-0 bg-gray-700 border-gray-600">
         <div className="p-6 sm:p-8 space-y-4">
-          <h1 className="text-xl font-bold text-white md:text-2xl text-center">
-            Masuk ke akun Medical Care
+          <h1 className="text-xl font-bold text-white md:text-2xl">
+            Buat Akun Medical Care
           </h1>
-
           <form className="space-y-4" onSubmit={handleSubmit}>
+            <div>
+              <label
+                htmlFor="name"
+                className="block mb-2 text-sm font-medium text-white"
+              >
+                Nama Lengkap
+              </label>
+              <input
+                type="text"
+                name="name"
+                id="name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5"
+                placeholder="John Doe"
+                required
+              />
+            </div>
             <div>
               <label
                 htmlFor="email"
@@ -70,11 +79,30 @@ export default function Login() {
               </label>
               <input
                 type="email"
+                name="email"
                 id="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 placeholder-gray-400"
+                className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5"
                 placeholder="name@company.com"
+                required
+              />
+            </div>
+            <div>
+              <label
+                htmlFor="phone"
+                className="block mb-2 text-sm font-medium text-white"
+              >
+                Nomor Telepon
+              </label>
+              <input
+                type="tel"
+                name="phone"
+                id="phone"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5"
+                placeholder="08xxxxxxxxxx"
                 required
               />
             </div>
@@ -87,10 +115,11 @@ export default function Login() {
               </label>
               <input
                 type="password"
+                name="password"
                 id="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 placeholder-gray-400"
+                className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5"
                 placeholder="••••••••"
                 required
               />
@@ -98,39 +127,26 @@ export default function Login() {
 
             <button
               type="submit"
-              disabled={loading}
-              className={`w-full text-white bg-purple-600 hover:bg-purple-500 font-medium rounded-lg text-sm px-5 py-2.5 mt-4 ${
-                loading ? "opacity-50 cursor-not-allowed" : ""
-              }`}
+              className="w-full text-white bg-purple-600 hover:bg-purple-500 font-medium rounded-lg text-sm px-5 py-2.5 mt-4"
             >
-              {loading ? "Memproses..." : "Sign In"}
+              Daftar
             </button>
 
-            {/* Pesan error/sukses */}
             {message && (
-              <p className="text-sm text-red-500 mt-2 text-center">{message}</p>
+              <p className="text-sm text-center text-red-500 mt-2">{message}</p>
             )}
           </form>
 
-          {/* Link ke halaman Sign Up */}
+          {/* Link ke login */}
           <p className="text-sm font-light text-gray-300 text-center mt-4">
-            Belum punya akun?{" "}
+            Sudah punya akun?{" "}
             <Link
-              href="/signup"
+              href="/login"
               className="font-medium text-purple-400 hover:underline"
             >
-              Daftar di sini
+              Masuk di sini
             </Link>
           </p>
-
-          {/* Tombol menuju halaman Add Patient */}
-          <div className="text-center mt-4">
-            <Link href="/add-patient">
-              <button className="bg-green-600 hover:bg-green-500 text-white font-medium rounded-lg text-sm px-4 py-2">
-                ➕ Tambah Pasien
-              </button>
-            </Link>
-          </div>
         </div>
       </div>
     </section>

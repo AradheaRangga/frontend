@@ -1,20 +1,21 @@
 "use client";
 import { useEffect, useState } from "react";
-import axios, { AxiosHeaders } from "axios";
+import axios from "axios";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import Layout from "@/components/layout";
 
 export default function Dashboard() {
   const router = useRouter();
-  const [patient, setPatient] = useState([]);
+  const [patients, setPatients] = useState([]);
   const [token, setToken] = useState("");
 
   useEffect(() => {
     const accessToken = localStorage.getItem("token");
     if (!accessToken) {
       router.push("/login");
+      return;
     }
+
     setToken(accessToken);
 
     const config = {
@@ -29,22 +30,33 @@ export default function Dashboard() {
         config
       )
       .then((response) => {
-        setPatient(response.data.data);
+        setPatients(response.data.data);
       })
       .catch((error) => {
         console.error("Error fetching data:", error);
-        if (error.response.status === 401) {
+        if (error.response?.status === 401) {
           router.push("/login");
         }
       });
   }, [router]);
+
   return (
     <>
       <div className="layout">
-        <Layout></Layout>
+        <Layout />
       </div>
 
       <div className="content p-4 sm:ml-64 relative overflow-x-auto">
+        {/* Tombol Add Patient */}
+        <div className="flex justify-end mb-4">
+          <button
+            onClick={() => router.push("/patient/add")}
+            className="bg-purple-600 hover:bg-purple-500 text-white font-medium py-2 px-4 rounded-lg"
+          >
+            + Add Patient
+          </button>
+        </div>
+
         <table className="w-full text-sm text-center rtl:text-right text-gray-400">
           <thead className="text-xs text-gray-400 uppercase bg-gray-700">
             <tr>
@@ -63,13 +75,10 @@ export default function Dashboard() {
             </tr>
           </thead>
           <tbody>
-            {patient.length > 0 ? (
-              patient.map((item, index) => (
+            {patients.length > 0 ? (
+              patients.map((item, index) => (
                 <tr key={item.id} className="bg-gray-800 border-gray-700">
-                  <th
-                    scope="row"
-                    className="px-6 py-4 font-medium text-white whitespace-nowrap"
-                  >
+                  <th className="px-6 py-4 font-medium text-white whitespace-nowrap">
                     {index + 1}
                   </th>
                   <td className="px-6 py-4 text-white">{item.name}</td>
@@ -83,8 +92,8 @@ export default function Dashboard() {
               ))
             ) : (
               <tr>
-                <td colSpan="4" className="text-white py-4">
-                  No Data
+                <td colSpan="4" className="text-white py-4 text-center">
+                  No Data Available
                 </td>
               </tr>
             )}
